@@ -25,9 +25,10 @@ class octopustentacle (
 	
 	exec { 'CreateNewCertificate' : 
 		command => "Tentacle.exe new-certificate --instance \"${instancename}\" --console",
-		require => Exec['CreateTentacleInstance'],
+		refreshonly => true,
+		subscribe => Exec['CreateTentacleInstance'],
 	}
-	
+		
 	exec { 'SetTentacleHome' :
 		command => "Tentacle.exe configure --instance \"${instancename}\" --home \"C:\\Octopus\" --console",
 		require => Exec['CreateTentacleInstance'],
@@ -56,7 +57,6 @@ class octopustentacle (
 		command => "Tentacle.exe register-with --instance \"${instancename}\" --server \"${serveraddress}\" --publichostname=\"${publichostname}\" --apiKey=\"${apikey}\" --role \"${role}\" --environment \"${environment}\" --comms-style TentaclePassive --force --console",
 		require => [ 
 			Exec['CreateTentacleInstance'],
-			Exec['CreateNewCertificate'], 
 			Exec['SetPort'], 
 			Exec['SetThumbprint'] ],
 	}
